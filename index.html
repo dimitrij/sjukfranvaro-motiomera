@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Bootstrap 101 Template</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+
+    <link href="Content/select2/select2.min.css" rel="stylesheet" />
+    <link href="Content/select2/select2-bootstrap.min.css" rel="stylesheet" />
+
+    <link href="Content/style.css" rel="stylesheet" />
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+    <div class="container wrapper">
+        <main class="content" ng-app="CalculatorApp" ng-controller="CalculatorController">
+            <div class="row">
+                <div class="col-sm-offset-1 col-sm-10">
+                    <header>
+                        <h2>Berakna kostnader for sjukfrånvaro</h2>
+                        <p class="text-center">
+                            Motiomera har tagit ett enkelt kalkylprogram for att du sjalv ska <br />
+                            kunna rakna ut vad sjukfranvaron pa din arbetsplats kostar.
+                        </p>
+                    </header>
+                </div>
+            </div>
+            <div class="row mb-sm mt-lg">
+                <div class="col-sm-5 col-sm-offset-1">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-8 control-label text-left">Snitt lon</label>
+                            <div class="col-sm-4">
+                                <input ng-change="calculate()" type="text" class="form-control input-sm" ng-model="snittlon">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-8 control-label text-left">Semester</label>
+                            <div class="col-sm-4">
+                                <select ng-change="calculate()" class="form-control input-sm" ng-model="semester" ng-options="item as item.name for item in semesters"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-8 control-label text-left">Arbetsgivaravgifter</label>
+                            <div class="col-sm-4">
+                                <select ng-change="calculate()" class="form-control input-sm" ng-model="arbetsgivaravgifter" ng-options="item as item.name for item in arbetsgivaravgifters"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-8 control-label text-left">Minimipris</label>
+                            <div class="col-sm-4 result-text">
+                                {{minimipris}} SEK
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-8 control-label text-left">Indirekta kostnader</label>
+                            <div class="col-sm-4 result-text">
+                                {{ indirektakostnader }} SEK
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-8 control-label text-left">Sjalvkostnad</label>
+                            <div class="col-sm-4 result-text">
+                                {{ sjalvkostnad }} SEK
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="col-sm-5">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-8 control-label">Antal anstalda</label>
+                            <div class="col-sm-4">
+                                <input ng-change="calculate()" type="text" class="form-control input-sm" ng-model="antalanstalda">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-8 control-label">Snitt antal sjuka dagar</label>
+                            <div class="col-sm-4">
+                                <select ng-change="calculate()" class="form-control input-sm" ng-model="sjukadagar" ng-options="item as item.name for item in sjukadagars"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-8 control-label">Antal sjuka dagar i snitt</label>
+                            <div class="col-sm-4">
+                                <select class="form-control sel input-sm" ng-model="dagarIsnitt">
+                                    <option>12</option>
+                                    <option>9</option>
+                                    <option>6</option>
+                                    <option>1</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row mb-sm">
+                <div class="col-sm-10 col-sm-offset-1">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <span class="label-dag">KOSTNAD PER DAG</span>
+                        </div>
+                        <div class="col-sm-8">
+                            <span class="cost-p-d">{{ perdag }} SEK </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-lg">
+                <div class="col-sm-5 col-sm-offset-1">
+                    <span class="label-dagar">KOSTNAD PER AR FOR SJUKA DAGAR</span>
+                </div>
+                <div class="col-sm-5">
+                    <span class="cost-p-year text-primary">{{ kostnad }} SEK</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-offset-1 col-sm-11">
+                    <input type="submit" class="btn btn-green" value="Kopa"/>
+                </div>
+            </div>
+        </main><!-- .content -->
+
+    </div><!-- .wrapper -->
+
+    <script type="text/javascript" src="Scripts/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="Scripts/select2/select2.min.js"></script>
+
+    <script type="text/javascript" src="Scripts/angular.min.js"></script>
+    <script type="text/javascript" src="Ctrl/calculator.js"></script>
+    <script>
+        $("select.form-control").select2({
+            theme: "bootstrap",
+            minimumResultsForSearch: -1
+        });
+    </script>
+</body>
+</html>
